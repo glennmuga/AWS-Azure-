@@ -1,25 +1,36 @@
-host EKS CLUSTER 
- create iam role and attach policy
- ECRfull access,EKSpolicy and IAM full access
- apt-get update -y
- apt install unzip -y
- curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
- unzip awscliv2.zip
- sudo ./aws/install
- aws configure
- Install EKS Tool
- curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
- sudo mv /tmp/eksctl /usr/local/bin
- eksctl version
- Install Kubectl
- curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
- sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl 
- kubectl version --client
- Create EKS Cluster
- eksctl create cluster --name my-cluster --region region-code --version 1.29 --vpc-public-subnets subnet-ExampleID1,subnet-ExampleID2 --without-nodegroup
+## *Create an EC2 instance EKS-mgr   Ubuntu t2.micro All traffic 1x10*
+### *Then create a role and give full access to Elasticcontainer full access ,amazonekscluster policy and IAM full*
+### *unzip file*
+ - apt install unzip -y
+###
+ - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+ - unzip awscliv2.zip
+### *install aws*
+ - sudo ./aws/install
+### *configure aws*
+ - aws configure
 
- ##Create a Node Group
- eksctl create nodegroup \
+(*Region without a,b and in output format enter table*)
+   
+### *Install EKS Tool*
+ - curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+ - sudo mv /tmp/eksctl /usr/local/bin
+ - eksctl version
+### *Install Kubectl*
+ 
+ -  curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+ -  sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+ -  kubectl version --client
+### *Create EKS Cluster*
+ -  eksctl create cluster --name my-cluster --region region-code --version 1.29 --vpc-public-subnets subnet-ExampleID1,subnet-ExampleID2 --without-nodegroup
+
+ (*Here in this case just add the region us-west-1 instead of region code, two empty subnets from vpc < subnet instead of ExampleID1 and ID2*)
+
+   ### *Creating node3 group*
+   
+  - ssh-keygen
+    
+  eksctl create nodegroup \
   --cluster my-cluster \
   --region us-east-2 \
   --name my-node-group \
@@ -31,9 +42,64 @@ host EKS CLUSTER
   --nodes-max 4 \
   --ssh-access \
   --ssh-public-key /root/.ssh/id_rsa.pub
+    
+    (*Change the subnet here as previously done*)
+    (*Change the region here*)
 
+### *When You want to delete cluster*
+  - eksctl delete cluster --name my-cluster
 
+### *Create replicaset*
+### *Replicaset is creating multiple pods simultaneously*
+  - vim replicaset.yml
+   
+### *Paste the below content inside* 
+    
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend
+  labels:
+    app: guestbook
+    tier: frontend
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: apache-app
+        image: nginx
 
+  - kubectl apply -f replicaset.yml
+  - kubectl get pods
 
- When You want to delete cluster
- eksctl delete cluster --name my-cluster
+### *Here after pod just paste one of the pods created simultaneously with the same timings*
+
+  - kubectl describe pod frontend-2j7rv
+   
+
+### *When number of pods are reduced the last pod will be deleted*
+### *When number of pods are increased the it will add on to the number of existing pods*
+### *Resizing the pod size with autoscaling and manual scaling*
+### *Once the pods are autoscaled they can't be autoscaled back again thus in that case they need to be manually scaled*
+
+(*This command will just give an overview of all the pods in detail*)
+
+- kubectl get pod -o wide
+- kubectl autoscale rs frontend --max=10 --min=3
+
+### *Manual scaling*
+
+- kubectl scale --replicas=9 -f replicaset.yml
+
+- kubectl get rs
+
+### *When You want to delete cluster*
+
+- eksctl delete cluster --name my-cluster
