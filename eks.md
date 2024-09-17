@@ -108,12 +108,12 @@ spec:
 
 ### *Deployment*
 
-- vim mahek-deployment.yml
+- vim glenn-deployment.yml
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mahek-deployment
+  name: glenn-deployment
   labels:
     app: nginx
 spec:
@@ -136,17 +136,17 @@ spec:
   - kubectl get pods
   - kubectl get rs
   - kubectl get deployment
-  - kubectl describe deployment mahek-deployment
-  - kubectl autoscale deployment mahek-deployment --max=10 --min=3
+  - kubectl describe deployment glenn-deployment
+  - kubectl autoscale deployment glenn-deployment --max=10 --min=3
   - kubectl get pods
 
 ### *Rolling Updates*
 
 (*Changing the version of nginx*)
 
-  -  kubectl set image deployment.v1.apps/mahek-deployment nginx=nginx:1.16.1  
-  -  kubectl describe deployment mahek-deployment
-  -  kubectl edit deployment/mahek-deployment
+  -  kubectl set image deployment.v1.apps/glenn-deployment nginx=nginx:1.16.1  
+  -  kubectl describe deployment glenn-deployment
+  -  kubectl edit deployment/glenn-deployment
 
      (*change max version 50% and change version 1.14.2*)
 
@@ -171,7 +171,7 @@ spec:
    (*This is if you wish to pull the image from other website*)
 
     FROM centos:latest
-    MAINTAINER mahekshetty05@gmail.com
+    MAINTAINER mglen05@gmail.com
     RUN yum install httpd -y
     RUN yum install zip -y
     RUN yum install unzip -y
@@ -206,7 +206,7 @@ spec:
 
  ### *Go to your previous cluster >> install nodes >> Do the deployment and edit image with the copied URL*
 
- - vim mahek-deployment.yml
+ - vim glenn-deployment.yml
 
 apiVersion: apps/v1
 kind: Deployment
@@ -230,7 +230,7 @@ spec:
         ports:
         - containerPort: 80
 
-  - kubectl apply -f mahek-deployment.yml
+  - kubectl apply -f glenn-deployment.yml
   - kubectl get pods
   - kubectl get deployment
-  - kubectl describe deployment mahek-deployment
+  - kubectl describe deployment glenn-deployment
