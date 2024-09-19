@@ -152,6 +152,7 @@ Now go to git hub >> web app> webapp> index-jsp > edit > commit changes > build 
 16.set docker passwd first 
 17.ssh-copy-id root@docker ip
 ssh-copy-id root@jenkins ip 
+18.ssh-copy-root@jenkins on docker terminal .
 18.allow security group permission - all icmp4
 ping .....
 19. jenkinsterminal check no.keys > cat _authkeys... ( 3 keys , already existing , jenkins public key and docker public key)
