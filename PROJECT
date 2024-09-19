@@ -1,0 +1,71 @@
+Create an ec2 instance ,t2.medium ( 2 core medium is used because jenkins is an orchestration tool ), created keypair , subnet-1a , security group - 8080 custom tcp  
+Instance created.
+We need to create 3 instances ( developer server , jenkins server , tomcat server ) # developer and tomcat server can have t2.micro 
+# Open developer server - connect the instance on terminal 
+1. sudo su -
+2. hostnamectl set-hostname developer  
+3. bash 
+4. ssh-keygen (to connect github with dev server ) 
+5. yum install git -y (to install git on the server )
+6. mkdir /data ( create a directory named data to store the git repo )
+7. cd /data
+8. git init (initialize git )
+9. cd
+10. cd .ssh/
+11. cat id_rsa.pub (to check the key id )
+12.  # go to github account add ssh-keygen in github
+13.come back to terminal 
+14. cd /data 
+15.git pull the ssh of the project that you have in your repo 
+16. git branch 
+17. ls
+18. git branch -M main
+19. git branch 
+20. ### Done witht the developer server 
+
+
+##########################################################################################################################################################
+
+1.now open the jenkins server , connect the ec2 instance 
+2.sudo su -
+3. hostnamectl set-hostname jenkins server 
+4. bash 
+5.yum install git -y
+5. dnf install java-17-amazon-corretto -y
+6.java -version
+7.wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+8.rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+9.dnf install jenkins -y
+10.systemctl enable jenkins
+11.systemctl start jenkins
+12. Use the public ip of the instance  > :8080 to the ip , your jenkins server should open 
+13. come on terminal and shoot this command > cat /var/lib/jenkins/secrets/initialAdminPassword
+## you will get a password 
+14. paste the password 
+15. username , password - admin - admin
+16. Configure 
+17. generate token 
+18. copy the token no. 
+19. add webhook in the repo where the project is located - url /github-webhook/, application /json 
+20. Go to jenkins 
+21.  create new item (jenk-job)- freestyle project , git - paste link , build it 
+
+#########################################################################################################################################################################
+
+Now build maven on the jenkins server itself 
+22. yum install maven -y
+23. mvn -v
+24. Go to manage jenkins > tools 
+25. add jdk > copy path of java form terminal 
+26. add maven installations > untick install automatically > add mvn path from terminal .
+27 . save 
+28.   Plugins 
+29.  Available plugins - Maven 
+30 . Installed plugins >git branch source plugin off > restart once no jobs are running .
+31. go to  new item > choose maven project > add git repo > save > build now > after build go to webapp-war and add ss
+
+###########################################################################################################################################################################
+
+Tomcat server :
+1. 
