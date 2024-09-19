@@ -142,5 +142,24 @@ Now go to git hub >> web app> webapp> index-jsp > edit > commit changes > build 
 6. sudo service docker start
 7.docker ps
 8.ssh-keygen
-9.
-
+9. do  aws configure on docker terminal 
+10.come on jenkins terminal server
+11. do ssh-keygen
+12. cd /etc/ssh
+13.vim sshd_config , permtlogin yes , prohibited password yes do the same on docker terminal 
+14.cd
+15.systemctl restart sshd
+16.set docker passwd first 
+17.ssh-copy-id root@docker ip
+17.allow security group permission - all icmp4
+ping .....
+18. Go to jenkins dashboard > Manage jenkis > System > ssh server >
+19. add ssh > name:jenkins > paste ip a s as hosttname > username root > remote dir /root
+20.add ssh> name :docker > paste ip a s of docker 2nd inet> username root >remote dir /root
+21. Go to jenkins > tomcat build > postbuild actions > add /root on context path >
+22. search ecr on aws > create ecr > 
+23. go to tomcat build , check console output and copy the path var/lib/jenkins/workspace/"build-name" add this path to 
+go to jenkins > tomcat build > postbuild actions > exec commands > rsync .... tomcat build name rsync -avh /var/lib/jenkins/workspace/tomcat-job/* root@docker ip :/opt
+cd /opt 
+#paste the 4 commands that we get after creating an ecr . 
+24.
