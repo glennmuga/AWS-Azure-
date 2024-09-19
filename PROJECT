@@ -68,4 +68,65 @@ Now build maven on the jenkins server itself
 ###########################################################################################################################################################################
 
 Tomcat server :
-1. 
+1. sudo su -
+2. dnf install java-17-amazon-corretto -y
+3. java --version 
+4.Go to apache tomcat link and copy tar.gz file choose version 9
+5.cd /opt 
+6.wget (copy targz link)
+7.ls (find targz file)
+8.tar -xvzf apache.....   (copy the link from ls)
+9.ls 
+10.mv apache-tomcat-9.0:76 tomcat (move the file to tomcat folder)
+11.ls
+12. cd 
+13.cd tomcat
+14.cd bin
+15./startup.sh
+16. copy the public IP of server an open it on new tab with port 8080
+To resolve 403 access denied go to context.xml 
+17.cd..
+18. find /-name context.xml
+19.(Here we need to edit last two files)
+open first file of the last two files with vim
+(Since the valve line is only allowing local host we will comment out those lines)
+comment <!-- 0:1 -->
+save the file
+20.edit second file on similar lines
+21.find / -name tomcat users.xml 
+22.cd .opt 
+23.cd apache .....
+24. vim conf/tomcat-users.xml
+add the roles script
+tomcat-users.xml
+  <role rolename="manager-gui"/>
+  <role rolename="manager-script"/>
+  <role rolename="manager-jmx"/>
+  <role rolename="manager-status"/>
+  <user username="admin" password="admin" roles="manager-gui, manager-script, manager-jmx, manager-status"/>
+  <user username="developer" password="developer" roles="manager-script"/>
+  <user username="tomcat" password="s3cret" roles="manager-gui"/>
+wq!
+25.cd /bin
+26. Go to jenkins > manage jenkins > plugins > available plugins > deploy to container > install without restart
+27.manage jenkins > security > system > global > add creds > developer (username) > password
+28.manage jenkins > security > system > global > add creds > developer (username)deployer  > password-deployeer
+ID - (tomcat cred)
+descr - ("")
+click on create 
+dashboard >> new job >> build and deploy >> maven project >> ok
+git
+repository (HTTPS)
+main
+build
+goals and option >> clean install
+post build action >> deploy war to container 
+**/*.war (no space)
+container (Tomcat 9x version)
+credentials (developer)
+URL of tomcat servers
+Apply >> save 
+(Before clicking build now close the apache tab to avoid any conflict)
+paste the public ip:8080
+manager app >> web app
+Now go to git hub >> web app> webapp> index-jsp > edit > commit changes > build now
