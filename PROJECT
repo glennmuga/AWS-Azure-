@@ -130,3 +130,17 @@ Apply >> save
 paste the public ip:8080
 manager app >> web app
 Now go to git hub >> web app> webapp> index-jsp > edit > commit changes > build now
+
+##############################################################################################
+
+    After tomcat :
+1. Go to jenkins , plugins 
+2. publishover ssh
+3. Create a docker instance , linux instance , t2.medium , same sec group , same key name .
+4. yum update -y
+5. sudo yum install -y docker
+6. sudo service docker start
+7.docker ps
+8.ssh-keygen
+9.
+
