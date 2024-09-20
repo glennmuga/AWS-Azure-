@@ -203,4 +203,56 @@ Kubernetes:
   --nodes-max 4 \
   --ssh-access \
   --ssh-public-key /root/.ssh/id_rsa.pub
-16.
+16.open sshd config file and make
+   PasswordAuthentication yes
+   PermitRootLogin yes
+17.systemctl restart sshd
+18.ssh-copy-id root@ip of jenkins on kubectl 
+do ssh-copy-id root@ip of kubectl on jenkins
+19.create deployment file
+    in deployment.yaml file
+    apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-project-deployment
+  labels:
+    app: regapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: regapp
+  template:
+    metadata:
+      labels:
+        app: regapp
+    spec:
+      containers:
+      - name: regapp
+        image: copy latest image from ecr here
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+20.create service file
+   in service.yaml file
+   apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  labels:
+    app: webapp
+spec:
+  selector:
+    app: webapp
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer
+21.kubectl apply -f deployment.yaml
+22.kubectl apply -f service.yaml
+23.kubectl expose deployment/deploymentname --type="LoadBalancer" --port 8080
+24.kubectl get svc
+expose your application using external ip address
+     
+    
+    
