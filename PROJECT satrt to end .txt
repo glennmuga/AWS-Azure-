@@ -169,3 +169,38 @@ go to jenkins > tomcat build >configure > post build actions > send to build art
 cd /opt 
 #paste the 4 commands that we get after creating an ecr . 
 24.save and apply and build
+
+##################################################################################################################################
+
+Kubernetes:
+1. create iam role with ecrfull access,ekspolicy and iam full access
+2.yum update -y
+3.yum install unzip -y
+4.curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+5. unzip awscliv2.zip
+6.sudo ./aws/install
+7. aws configure
+8.Install EKS Tool
+  curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+9.sudo mv /tmp/eksctl /usr/local/bin
+10.eksctl version
+11. Install Kubectl
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+12.sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl 
+13. kubectl version --client
+14. Create EKS Cluster
+    eksctl create cluster --name my-cluster --region region-code --version 1.29 --vpc-public-subnets subnet-ExampleID1,subnet-ExampleID2 --without-nodegroup
+15. create node group
+     eksctl create nodegroup \
+  --cluster my-cluster \
+  --region us-east-2 \
+  --name my-node-group \
+  --node-ami-family Ubuntu2004 \
+  --node-type t2.small \
+  --subnet-ids subnet-086ced1a84c94a342,subnet-01695faa5e0e61d97 \
+  --nodes 3 \
+  --nodes-min 2 \
+  --nodes-max 4 \
+  --ssh-access \
+  --ssh-public-key /root/.ssh/id_rsa.pub
+16.
