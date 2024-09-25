@@ -87,3 +87,77 @@ yum install httpd -y
 
 cat provider.tf 
 
+## do aws configure on old terminal
+
+ cd /proj
+ 
+## remove the first { } from vim provider.tf
+
+terraform destroy
+
+ll
+
+add new tag to instance 
+
+terraform get provider.tf
+
+terraform fmt 
+
+terraform plan
+
+terraform apply 
+
+terraform destroy 
+
+## Go on the old terminal again 
+ cd /proj
+
+ mkdir /glenn-data
+
+ cd /proj
+
+cp provider.tf /glenn-data
+
+cd /glenn-data
+
+mv my-resource.tf
+
+mv provider.tf my-resource.tf
+
+vim my-resource.tf
+
+## add availabilty zone 
+
+avaialbility_zone = 
+
+vim my-resource.tf
+
+## add secuity group code 
+
+## copy from the aws documentation >> vpc >> aws_secuirty_group  
+
+tags =  
+## change port 
+from and to = 80
+
+allow_http_ipv4 , allow_tls_ssh
+
+port 22 and 22
+web-serever-sg
+remove last rule 
+
+comment all cidr
+
+#cidr
+
+wq!
+
+tree -a
+
+terraform init
+
+terraform fmt 
+
+terraform validate 
+
+terraform apply
