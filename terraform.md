@@ -1,17 +1,15 @@
-## Terraform :
+# Terraform :
 
-create an ec2 instance 
-open the terminal 
-> go on install teraform copy and paste the commands 
+## create an ec2 instance 
+## open the terminal 
+## go on install teraform copy and paste the commands 
 sudo yum install -y yum-utils shadow-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 sudo yum -y install terraform
 terraform -v
 ## Amazon liux
-> install cli on terminal 
-curl "
-https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
--o "awscliv2.zip"
+## *install cli on terminal*
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
 
