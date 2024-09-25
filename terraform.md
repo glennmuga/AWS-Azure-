@@ -1,0 +1,54 @@
+## Terraform :
+
+create an ec2 instance 
+open the terminal 
+> go on install teraform copy and paste the commands 
+sudo yum install -y yum-utils shadow-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum -y install terraform
+terraform -v
+## Amazon liux
+> install cli on terminal 
+curl "
+https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+-o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+## aws configure 
+
+>> aws provider terraform website
+mkdir /proj
+cd proj 
+vim provider.tf
+>> paste the provider commands
+
+tree -a
+terraform init
+l.
+cd /proj
+ll
+
+> aws_instance resources
+
+go on vim file 
+#my ec2 code 
+>>paste the aws_instance resources
+name the server 
+change ami image copy the ami in new region.
+instance type t2.micro
+delete host resource group
+key_name = "keyname"
+
+## Terraform init  
+ll
+terraform validate
+terraform plan (just gives us what all will be executed )
+terraform apply  (will create infra on aws cloud ) 
+ >>>> an instance will be created on your aws
+>> try to connect it with the terminal
+Add ssh in sec groups of the instance
+
+yum install httpd -y
+cat provider.tf 
+
