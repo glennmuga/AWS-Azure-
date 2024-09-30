@@ -1,7 +1,9 @@
-Complete build till docker and push image on ecr 
+create new repo on ecr 
+create kubernetes cluster 
 
-Repo , create folder .github/workflows
 
+go on github Repo , create folder .github/workflows
+add deployment.yml file and paste the content below 
 
 ``` yml
 name: Deploy to ECR
@@ -11,7 +13,7 @@ on:
     branches: [ main ]
  
 env:
-  ECR_REPOSITORY: mansi-30
+  ECR_REPOSITORY: ecr_container (name the ecr image)
   EKS_CLUSTER_NAME: my-cluster
   AWS_REGION: ap-southeast-1
  
