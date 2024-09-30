@@ -1,0 +1,24 @@
+Mount blob on azure virtual machine and ec2 instance
+https://learn.microsoft.com/en-us/azure/storage/blobs/storage-how-to-mount-container-linux?tabs=Ubuntu
+    1  cat /etc/*-release
+    2  sudo wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+    3  sudo dpkg -i packages-microsoft-prod.deb
+    4  sudo apt-get update
+    5  sudo apt-get install blobfuse
+    6  sudo mkdir /mnt/resource/blobfusetmp -p
+    7  vim fuse_connection.cfg
+    8  sudo chmod 600 /path/to/fuse_connection.cfg
+    9  sudo chmod 600 fuse_connection.cfg
+   10  sudo mkdir ~/mycontainer
+   11  sudo blobfuse ~/mycontainer --tmp-path=/mnt/resource/blobfusetmp  --config-file=/path/to/fuse_connection.cfg -o 
+       attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120
+   12  apt-get install libfuse2
+   13  sudo blobfuse ~/mycontainer --tmp-path=/mnt/resource/blobfusetmp  --config-file=/path/to/fuse_connection.cfg -o 
+       attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120
+   14  sudo blobfuse ~/mycontainer --tmp-path=/mnt/resource/blobfusetmp  --config-file=fuse_connection.cfg -o 
+       attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120
+   15  cd mycontainer
+   16  ls
+   17  echo "This is Mansi from ec2" > index1.html
+   18  ls
+   19  history
