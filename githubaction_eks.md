@@ -74,4 +74,59 @@ jobs:
         kubectl apply -f deployment.yml
         kubectl apply -f service.yml
 ```
+come on terminal 
+vim depoloyment.yml
+
+``` yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app1
+  namespace: default
+  labels:
+    app: my-app1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app1
+  template:
+    metadata:
+      labels:
+        app: my-app1
+    spec:
+      containers:
+      - name: my-app1
+        image: 288761750357.dkr.ecr.ap-southeast-1.amazonaws.com/mansi-30:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+```
+
+vim service.yml
+
+``` yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: regapp-service1
+  labels:
+    app: my-app1
+spec:
+  selector:
+    app: my-app1
+ 
+  ports:
+    - port: 8080
+      targetPort: 8080
+ 
+  type: LoadBalancer
+```
+run the commands 
+
 
