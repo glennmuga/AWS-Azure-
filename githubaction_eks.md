@@ -3,7 +3,8 @@ Complete build till docker and push image on ecr
 Repo , create folder .github/workflows
 
 
-``` ymlname: Deploy to ECR
+``` yml
+name: Deploy to ECR
  
 on: 
   push:
