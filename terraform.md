@@ -20,144 +20,245 @@ unzip awscliv2.zip
 sudo ./aws/install
 
 ## aws configure 
+AB01 : Creating EC2 instance using Terraform
 
->> aws provider terraform website
-mkdir /proj
+Install terraform
 
-cd proj 
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum install terraform -y
+Connect terraform server to cloud (aws) using AWS Provider of AWS configure
 
-vim provider.tf
+Initialize Terraform
 
->> paste the provider commands
+create aws instance using terraform
 
-tree -a
-
-terraform init
-
-l.
-
-cd /proj
-
-ll
-
-> aws_instance resources
-
-## go on vim file 
-
-## my ec2 code 
-## paste the aws_instance resources
 provider "aws" {
-  region     = "us-east-1"
-  access_key = ""
-  secret_key = ""
- 
-}
- 
-resource "aws_instance" "my-server" {
-  ami                     = "ami-0ebfd941bbafe70c6"
-  instance_type           = "t2.micro"
-  key_name                = "terr"
+  region  = "ap-south-1"
 }
 
-name the server 
+resource "aws_instance" "Dev_server" {
+  ami           = "ami-08718895af4dfa033"
+  instance_type = "t2.micro"
+  key           = "trf-kp"
+}
+Validate Terraform
+Plan Terraform
+Apply Terraform
+terraform init >> terraform validate >> terraform plan >> terraform apply
 
-change ami image copy the ami in new region.
+enable SSH in security group
+Connect to the instance
+Important commands in terraform:
+terraform fmt : format code per HCL canonical standard
+terraform validate : validate code for syntax
+terraform init : initialize directory, pull down providers
+terraform plan -out plan.out : use the plan.out file to deploy infrastructure
+terraform apply --auto-approve : apply changes without being prompted to enter "yes"
+terraform destroy : destroy/cleanup deployment
+terraform state show aws_instance.Dev_server : show details stored in Terraform state for the resource
+LAB02 : EBS attachment
 
-instance type t2.micro
+provider "aws" {
+  region = "ap-south-1"
+}
 
-delete host resource group
+#security group
+resource "aws_security_group" "webserver-sg" {
+  name        = "webserver-sg"
+  description = "allow ssh and http"
 
-key_name = "keyname of new region "
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-## Terraform init  
-ll
-terraform validate
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-terraform plan (just gives us what all will be executed )
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-terraform apply  (will create infra on aws cloud ) 
+}
 
- >>>> an instance will be created on your aws
+#create instance
+resource "aws_instance" "EC2-instance-1" {
+  ami               = "ami-08718895af4dfa033"
+  availability_zone = "ap-south-1a"
+  instance_type     = "t2.micro"
+  security_groups   = ["${aws_security_group.webserver-sg.name}"]
+  key_name          = "trf-kp"
+  tags = {
+    Name = "EC2-instance-1"
+  }
+}
 
->> try to connect it with the terminal
+#create block storage
+resource "aws_ebs_volume" "data_vol" {
+  availability_zone = "ap-south-1a"
+  size              = 5
+}
 
-Add ssh in sec groups of the instance
+resource "aws_volume_attachment" "EC2-instance-1-vol" {
+  device_name = "/dev/sdc"
+  volume_id   = aws_ebs_volume.data_vol.id
+  instance_id = aws_instance.EC2-instance-1.id
+}
 
-yum install httpd -y
+LAB03 : Creating vpc and attaching instance with subnet
 
-cat provider.tf 
+#assigning aws provider
+provider "aws" {
+  region = "ap-south-1"
+}
 
-## do aws configure on old terminal
+#creating vpc
+resource "aws_vpc" "main" {
+  cidr_block       = "10.0.0.0/16"
+  instance_tenancy = "default"
 
- cd /proj
- 
-## remove the first { } from vim provider.tf
+  tags = {
+    Name = "main"
+  }
+}
 
-terraform destroy
+#creating internet gateway
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
 
-ll
+  tags = {
+    Name = "gw"
+  }
+}
 
-add new tag to instance 
+#creating subnet in main vpc
+resource "aws_subnet" "public" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.0.0/24"
+  availability_zone = "ap-south-1a"
+  tags = {
+    Name = "public"
+  }
+}
 
-terraform get provider.tf
+#creating route table
+resource "aws_route_table" "public-rt" {
+  vpc_id = aws_vpc.main.id
 
-terraform fmt 
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
 
-terraform plan
+  tags = {
+    Name = "public-rt"
+  }
+}
 
-terraform apply 
+#connecting route table with subnet
+resource "aws_route_table_association" "a" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.public-rt.id
+}
 
-terraform destroy 
+#creating security group for ec2 instance
+resource "aws_security_group" "vpc-sg" {
+  name   = "newvpc"
+  vpc_id = aws_vpc.main.id
 
-## Go on the old terminal again 
- cd /proj
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
- mkdir /glenn-data
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
- cd /proj
+  tags = {
+    Name = "vpc-sg"
+  }
+}
 
-cp provider.tf /glenn-data
+#creating elastic ip
+#resource "aws_eip" "eip1" {
+#  domain = "vpc"
+#}
 
-cd /glenn-data
+#creating aws instance
+resource "aws_instance" "test" {
+  ami                    = "ami-08718895af4dfa033"
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.vpc-sg.id]
+  key_name               = "trf-kp"
+  tags = {
+    Name = "test"
+  }
+}
 
-mv my-resource.tf
+#creating eip association with instance
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.test.id
+  allocation_id = "eipalloc-0cc9adb3c92ecc44b"
+}
+sonarcube : security analysis of devops : devSecOps LAB04: Custom-size for root-volume for EC2 instance
+provider "aws" {
+  region = "ap-south-1"
+}
 
-mv provider.tf my-resource.tf
+resource "aws_security_group" "root-sg" {
+  name        = "root-sg"
+  description = "security group for modifying root volume of instance"
 
-vim my-resource.tf
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-## add availabilty zone 
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-avaialbility_zone = 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
-vim my-resource.tf
+resource "aws_instance" "test-volume" {
+  ami               = "ami-08718895af4dfa033"
+  availability_zone = "ap-south-1a"
+  instance_type     = "t2.micro"
+  security_groups   = [aws_security_group.root-sg.name]
+  key_name          = "trf-kp"
 
-## add secuity group code 
-
-## copy from the aws documentation >> vpc >> aws_secuirty_group  
-
-tags =  
-## change port 
-from and to = 80
-
-allow_http_ipv4 , allow_tls_ssh
-
-port 22 and 22
-web-serever-sg
-remove last rule 
-
-comment all cidr
-
-#cidr
-
-wq!
-
-tree -a
-
-terraform init
-
-terraform fmt 
-
-terraform validate 
-
-terraform apply
+  #root disk
+  root_block_device {
+    volume_size           = "26"
+    volume_type           = "gp2"
+    delete_on_termination = true
+  }
+}
