@@ -10,9 +10,9 @@ Now to mount the disk on terminal
 lsblk
 df -h
 mkfs. <tab> <tab>
-mkfs.ext4 /dev/xvdb
+mkfs.ext4 /dev/sdc
 mkdir /data
-mount /dev/xvdb /data
+mount /dev/sdc /data
 blkid >copy uuid of xvdb and paste it below 
 vim /etc/fstab {uuid = …. /data ext4 defaults 0 0)
 df -h
