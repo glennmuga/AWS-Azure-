@@ -128,5 +128,7 @@ spec:
   type: LoadBalancer
 ```
 run the commands 
-
+Click on Actions on git hub
+kubectl get svc (paste the external ip on the browser
+delete the deployment and service file from the terminala and run.
 
