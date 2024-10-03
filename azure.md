@@ -17,7 +17,9 @@ go to virtual machines >> choose correct resource group >> name >> networking >>
 
 Give port access >> click on instance >> networking >> network setting >> create port rule >> don't add source port >> paste public ip on browser
 
-load balancer >> create >> frontend ip >> name >> save >> backend pool >> select ip >> review + create >> create >> view health probes >> name >> save >> load balancing rules >> add >> port and backend port give 80 >> save >> search storage accounts >> create a new storage account >> review and create >> click on the storage created >> upload a file >> create new container >> upload
+load balancer >> create >> frontend ip >> name >> save >> backend pool >> select ip >> review + create >> create >> view health probes >> name >> save >>
+load balancing rules >> add >> port and backend port give 80 >> save >> search storage accounts >> create a new storage account >> review and create >>
+click on the storage created >> upload a file >> create new container >> upload
 
 ## Commands on terminal 1
 
